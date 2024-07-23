@@ -40,10 +40,38 @@ func CreateRecord(sportName, results string, chatId int) {
 
 		} else if strings.Index(result[i], "-") != -1 {
 			assigned_sport_type = "time"
+			time_result := strings.Split(result[i], "-")
+			r_hour, err := strconv.ParseFloat(strings.TrimSpace(time_result[0]), 64)
+			r_minute, err := strconv.ParseFloat(strings.TrimSpace(time_result[1]), 64)
+
+			if err != nil {
+				fmt.Println("Error:", err)
+				return
+			}
+
+			final_result = r_hour*60*60 + r_minute*60
+
 		} else if strings.Index(result[i], ".") != -1 {
 			assigned_sport_type = "weight"
+			r_weight, err := strconv.ParseFloat(strings.TrimSpace(result[i]), 64)
+
+			if err != nil {
+				fmt.Println("Error:", err)
+				return
+			}
+
+			final_result = r_weight * 1000
 		} else if match == true {
 			assigned_sport_type = "count"
+			r_count, err := strconv.ParseFloat(strings.TrimSpace(result[i]), 64)
+
+			if err != nil {
+				fmt.Println("Error:", err)
+				return
+			}
+
+			final_result = final_result + r_count
+
 		}
 		//рассчитываем финальный результат исходя из типа спорта
 		//10x65 count and weight \Bx\B
