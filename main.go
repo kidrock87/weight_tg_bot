@@ -28,7 +28,7 @@ func main() {
 		panic(err)
 	}
 
-	//bot.Debug = true
+	bot.Debug = true
 
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 
@@ -40,6 +40,12 @@ func main() {
 	for update := range updates {
 
 		if update.Message == nil { // ignore any non-Message updates
+			if update.Message.Text == "/status" {
+				msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Неправильный формат данных или команды")
+				if _, err := bot.Send(msg); err != nil {
+					log.Panic(err)
+				}
+			}
 			continue
 		}
 
@@ -78,12 +84,23 @@ func main() {
 		switch update.Message.Command() {
 		case "help":
 			msg.Text = "I understand /sayhi and /status."
-		case "newrecord":
-			log.Print(update.Message)
+		case "analytics":
+			aaa := strings.Split(update.Message.Text, " ")
+			if len(aaa) > 1 {
+				returnMessage := controllers.GetAnalyticsBySportLast(strings.TrimSpace(aaa[1]), int(update.Message.Chat.ID))
+				msg.Text = returnMessage
+			} else {
+				msg.Text = "Нет аналитики по этому виду спорта"
+			}
+
 		case "status":
 			msg.Text = "I'm ok."
 		default:
 			msg.Text = "I don't know that command"
+		}
+
+		if _, err := bot.Send(msg); err != nil {
+			log.Panic(err)
 		}
 
 	}

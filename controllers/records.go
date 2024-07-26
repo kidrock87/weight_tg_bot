@@ -93,6 +93,7 @@ func CreateRecord(sportName, results string, chatId int) {
 	r.Sport = s
 	r.Result = int(final_result)
 	r.ChatID = chatId
+	r.Oresult = strings.TrimSpace(results)
 
 	if err != nil {
 		log.Print("error:", err.Error())
@@ -101,5 +102,9 @@ func CreateRecord(sportName, results string, chatId int) {
 
 	_, err = r.SaveRecord()
 	//Записываем результат в рекордс
+	if err != nil {
+		log.Print("error:", err.Error())
+		return
+	}
 
 }
