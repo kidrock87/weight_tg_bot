@@ -64,7 +64,15 @@ func main() {
 				if len(result) > 1 {
 					sporttype := result[0]
 					results := result[1]
-					controllers.CreateRecord(sporttype, results, int(update.Message.Chat.ID))
+					res := controllers.CreateRecord(sporttype, results, int(update.Message.Chat.ID))
+					if res == "Success" {
+						returnMessage := controllers.GetAnalyticsBySportLast(strings.TrimSpace(sporttype), int(update.Message.Chat.ID))
+						msg := tgbotapi.NewMessage(update.Message.Chat.ID, returnMessage)
+						if _, err := bot.Send(msg); err != nil {
+							log.Panic(err)
+						}
+
+					}
 				} else {
 					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Неправильный формат данных или команды")
 					if _, err := bot.Send(msg); err != nil {
@@ -84,11 +92,25 @@ func main() {
 		switch update.Message.Command() {
 		case "help":
 			msg.Text = "I understand /sayhi and /status."
-		case "analytics":
+		case "chart":
+			aaa := strings.Split(update.Message.Text, " ")
+			if len(aaa) > 1 {
+				returnMessage := controllers.GetAnalyticsChartBySport(strings.TrimSpace(aaa[1]), int(update.Message.Chat.ID))
+				photo := tgbotapi.NewPhoto(update.Message.From.ID, tgbotapi.FileURL(returnMessage))
+				if _, err = bot.Send(photo); err != nil {
+					log.Panic(err)
+				}
+				msg.Text = "returnMessage"
+
+			} else {
+
+			}
+		case "lastresult":
 			aaa := strings.Split(update.Message.Text, " ")
 			if len(aaa) > 1 {
 				returnMessage := controllers.GetAnalyticsBySportLast(strings.TrimSpace(aaa[1]), int(update.Message.Chat.ID))
 				msg.Text = returnMessage
+
 			} else {
 				msg.Text = "Нет аналитики по этому виду спорта"
 			}

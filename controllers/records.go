@@ -10,7 +10,7 @@ import (
 	"tg_weight_bot/models"
 )
 
-func CreateRecord(sportName, results string, chatId int) {
+func CreateRecord(sportName, results string, chatId int) (res string) {
 	s := models.Sport{}
 	r := models.Record{}
 	sportName = strings.TrimSpace(sportName)
@@ -106,5 +106,7 @@ func CreateRecord(sportName, results string, chatId int) {
 		log.Print("error:", err.Error())
 		return
 	}
+
+	return "Success"
 
 }
